@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using Photon.Pun;
+using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
-public class ProjectileScript : MonoBehaviour
+[RequireComponent(typeof(PhotonView))]
+public class ProjectileScript : MonoBehaviour, IPunObservable
 {
     private PlayerScript _owner;
     private Vector3 _direction;
@@ -39,5 +41,10 @@ public class ProjectileScript : MonoBehaviour
         {
             player.Hit(new DamageArgs(_damage, _owner));
         }
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        throw new System.NotImplementedException();
     }
 }

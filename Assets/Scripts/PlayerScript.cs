@@ -1,11 +1,14 @@
-﻿using System;
+﻿using Photon.Pun;
+using System;
 using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
-public class PlayerScript : MonoBehaviour
+[RequireComponent(typeof(PhotonView))]
+public class PlayerScript : MonoBehaviour, IPunObservable
 {
     private PlayerControls _playerControls;
+    private PhotonView _photonView;
 
     private PlayerData _playerData;
     public int ID { private set => _playerData.ID = value; get => _playerData.ID; }
@@ -22,6 +25,8 @@ public class PlayerScript : MonoBehaviour
 
     private void Awake()
     {
+        _photonView = GetComponent<PhotonView>();
+        if (!_photonView.IsMine) return;
         _playerControls = new PlayerControls();
     }
     private void Update()
@@ -76,5 +81,23 @@ public class PlayerScript : MonoBehaviour
         CanAttack = isEnabled;
         if (isEnabled) _playerControls.Enable();
         else _playerControls.Disable();
+    }
+
+    private void UpdateProperties(PlayerData data)
+    {
+        Health = data.Health;
+        transform.position = new Vector3(data.PositionX, transform.position.y, data.PositionZ);
+        transform.eulerAngles = new Vector3(transform.eulerAngles.x, data.RotationY, transform.eulerAngles.z);
+    }
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsReading)
+        {
+            UpdateProperties((PlayerData)stream.ReceiveNext());
+        }
+        else
+        {
+            stream.SendNext(PlayerData.Parse(this));
+        }
     }
 }

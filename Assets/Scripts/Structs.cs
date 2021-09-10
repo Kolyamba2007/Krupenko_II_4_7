@@ -20,6 +20,17 @@ struct PlayerData
     public float PositionZ;
     public float RotationY;
 
+    public static PlayerData Parse(PlayerScript player)
+    {
+        return new PlayerData
+        {
+            ID = player.ID,
+            Health = player.Health,
+            PositionX = player.transform.position.x,
+            PositionZ = player.transform.position.z,
+            RotationY = player.transform.eulerAngles.y
+        };
+    }
     public static byte[] Serialize(object data)
     {
         PlayerData playerData = (PlayerData)data;

@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
 
     private PlayerScript InstantiatePlayer(Vector3 position)
     {
-        var player = Instantiate(_playerPrefab, position, Quaternion.identity);
+        var player = PhotonNetwork.Instantiate($"Prefabs/{_playerPrefab.name}", position, Quaternion.identity);
         var component = player.GetComponent<PlayerScript>();
         component.Fire += (direction) =>
         {
@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
     }
     private ProjectileScript InstantiateProjectile(Vector3 position)
     {
-        var projectile = Instantiate(_projectilePrefab, position, Quaternion.identity);
+        var projectile = PhotonNetwork.Instantiate($"Prefabs/{_projectilePrefab.name}", position, Quaternion.identity);
         return projectile.GetComponent<ProjectileScript>();
     }
 }
