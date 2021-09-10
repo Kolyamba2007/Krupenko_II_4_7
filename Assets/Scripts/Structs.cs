@@ -4,11 +4,11 @@ using System.Collections.Generic;
 public struct DamageArgs
 {
     public readonly uint Value;
-    public readonly int SourceID;
-    DamageArgs(uint value, int sourceID)
+    public readonly PlayerScript Source;
+    public DamageArgs(uint value, PlayerScript source)
     {
         Value = value;
-        SourceID = sourceID;
+        Source = source;
     }
 }
 

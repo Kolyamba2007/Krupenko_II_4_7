@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(Collider))]
 public class PlayerScript : MonoBehaviour
 {
     private PlayerControls _playerControls;
@@ -8,12 +10,15 @@ public class PlayerScript : MonoBehaviour
     private PlayerData _playerData;
     public int ID { private set => _playerData.ID = value; get => _playerData.ID; }
     public uint Health { private set => _playerData.Health = value; get => _playerData.Health; }
-    public Vector3 Position => new Vector3(_playerData.PositionX, transform.position.y, _playerData.PositionZ);
 
     [SerializeField, Min(0)]
     private float _movementSpeed;
+    [SerializeField, Min(0)]
+    private float _attackCooldown = 2f;
+    private bool CanAttack { set; get; } = true;
 
-    public event Action<int> Died;
+    public event Action<PlayerScript> Died;
+    public event Action<Vector3> Fire;
 
     private void Awake()
     {
@@ -33,15 +38,28 @@ public class PlayerScript : MonoBehaviour
         {
             transform.LookAt(new Vector3(hit.point.x, transform.position.y, hit.point.z), Vector3.up);
         }
+
+        var fire = _playerControls.Player.Fire.IsPressed();
+        if (fire && CanAttack)
+        {
+            Fire?.Invoke(transform.forward);
+            StartCoroutine(AttackCooldown());
+        }
+    }
+    private IEnumerator AttackCooldown()
+    {
+        CanAttack = false;
+        yield return new WaitForSeconds(_attackCooldown);
+        CanAttack = true;
     }
 
     private void OnEnable()
     {
-        _playerControls.Enable();
+        Enable(true);
     }
     private void OnDisable()
     {
-        _playerControls.Disable();
+        Enable(false);
     }
 
     public void Hit(DamageArgs args)
@@ -50,7 +68,13 @@ public class PlayerScript : MonoBehaviour
         else
         {
             Health = 0;
-            Died?.Invoke(args.SourceID);
+            Died?.Invoke(args.Source);
         }
+    }
+    public void Enable(bool isEnabled)
+    {
+        CanAttack = isEnabled;
+        if (isEnabled) _playerControls.Enable();
+        else _playerControls.Disable();
     }
 }
