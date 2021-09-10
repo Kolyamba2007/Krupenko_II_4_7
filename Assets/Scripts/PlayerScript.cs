@@ -81,6 +81,8 @@ public class PlayerScript : MonoBehaviour, IPunObservable
     public void Enable(bool isEnabled)
     {
         CanAttack = isEnabled;
+
+        if (!_photonView.IsMine) return;
         if (isEnabled) _playerControls.Enable();
         else _playerControls.Disable();
     }
