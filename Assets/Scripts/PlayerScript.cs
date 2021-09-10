@@ -5,7 +5,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(PhotonView))]
-public class PlayerScript : MonoBehaviour, IPunObservable
+public class PlayerScript : MonoBehaviour, IEquatable<PlayerScript>, IPunObservable
 {
     private PlayerControls _playerControls;
     private PhotonView _photonView;
@@ -104,4 +104,6 @@ public class PlayerScript : MonoBehaviour, IPunObservable
             stream.SendNext(PlayerData.Parse(this));
         }
     }
+
+    public bool Equals(PlayerScript other) => ID == other.ID;
 }
