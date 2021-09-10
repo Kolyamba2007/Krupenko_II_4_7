@@ -23,13 +23,15 @@ public class MenuManager : MonoBehaviourPunCallbacks
     {
         if (str == null || str.Length == 0) return true;
 
-        int index = str.IndexOf((char)8203);
-        if (index == 0)
+        const char zeroWidthSymbol = (char)8203;
+
+        int index = str.IndexOf(zeroWidthSymbol);
+        while (index >= 0)      
         {
             str = str.Remove(index, 1);
-            return true;
+            index = str.IndexOf(zeroWidthSymbol);
         }
-        return false;
+        return str.Length == 0 ? true : false;
     }
     private void Enable(bool isEnabled)
     {
@@ -51,7 +53,13 @@ public class MenuManager : MonoBehaviourPunCallbacks
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
         Enable(true);
-        Debug.Log("Unable to join the room.");
+        Debug.LogWarning("Unable to join the room.");
+        Debug.LogError(message);
+    }
+    public override void OnJoinRandomFailed(short returnCode, string message)
+    {
+        Enable(true);
+        Debug.LogWarning("Unable to join the room.");
         Debug.LogError(message);
     }
 
@@ -62,7 +70,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
             Debug.LogWarning("Nickname cannot be empty.");
             return;
         }
-        PhotonNetwork.CreateRoom("", new RoomOptions { MaxPlayers = 2 });
+        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 2 });
         Enable(false);
     }
     public void Connect_UnityEditor()
