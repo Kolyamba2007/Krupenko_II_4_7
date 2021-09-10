@@ -31,6 +31,8 @@ public class PlayerScript : MonoBehaviour, IPunObservable
     }
     private void Update()
     {
+        if (!_photonView.IsMine) return;
+
         Vector2 movement = _playerControls.Player.Movement.ReadValue<Vector2>();
         if (movement.x != 0 || movement.y != 0)
         {
