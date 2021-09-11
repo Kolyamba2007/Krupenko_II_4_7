@@ -6,7 +6,6 @@ using UnityEngine;
 public class ProjectileScript : MonoBehaviour, IPunObservable
 {
     private PlayerScript _owner;
-    private Vector3 _direction;
 
     [SerializeField, Min(0)]
     private float _movementSpeed;
@@ -23,14 +22,13 @@ public class ProjectileScript : MonoBehaviour, IPunObservable
     {
         if (_movementSpeed > 0)
         {
-            transform.Translate(_direction * _movementSpeed * Time.deltaTime);
+            transform.position += transform.forward * _movementSpeed * Time.deltaTime;
         }
     }
 
-    public void Blast(Vector3 direction, PlayerScript owner)
+    public void Blast(PlayerScript owner)
     {
         _owner = owner;
-        _direction = direction;
         //transform.LookAt(transform.forward + direction, Vector3.up);
     }
 
@@ -45,6 +43,15 @@ public class ProjectileScript : MonoBehaviour, IPunObservable
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        throw new System.NotImplementedException();
+        if (stream.IsReading)
+        {
+            var data = (ProjectileData)stream.ReceiveNext();
+            transform.position = new Vector3(data.PositionX, transform.position.y, data.PositionZ);
+            transform.eulerAngles = new Vector3(transform.eulerAngles.x, data.RotationY, transform.eulerAngles.z);
+        }
+        else
+        {
+            stream.SendNext(ProjectileData.Parse(this));
+        }
     }
 }

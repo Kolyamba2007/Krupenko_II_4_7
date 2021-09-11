@@ -13,10 +13,11 @@ public class MenuManager : MonoBehaviourPunCallbacks
     [SerializeField]
     private Button _connectButton;
 
-    private void Start()
+    private void Awake()
     {
-        if (!PhotonNetwork.IsConnected) PhotonNetwork.ConnectUsingSettings();
         PhotonNetwork.GameVersion = Application.version;
+        PhotonNetwork.AutomaticallySyncScene = true;
+        if (!PhotonNetwork.IsConnected) PhotonNetwork.ConnectUsingSettings();     
     }
 
     private bool IsNullOrEmpty(string str)
@@ -39,6 +40,10 @@ public class MenuManager : MonoBehaviourPunCallbacks
         _connectButton.interactable = isEnabled;
     }
 
+    public override void OnCreatedRoom()
+    {
+        Debug.Log($"Player {_nickname.text} created room.");
+    }
     public override void OnConnectedToMaster()
     {
         Enable(true);
@@ -46,7 +51,6 @@ public class MenuManager : MonoBehaviourPunCallbacks
     }
     public override void OnJoinedRoom()
     {
-        PhotonNetwork.NickName = _nickname.text;
         PhotonNetwork.LoadLevel(1);
         Debug.Log($"Player {PhotonNetwork.NickName} joined to room.");
     }
@@ -70,6 +74,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
             Debug.LogWarning("Nickname cannot be empty.");
             return;
         }
+        PhotonNetwork.NickName = _nickname.text;
         PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 2 });
         Enable(false);
     }
@@ -80,6 +85,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
             Debug.LogWarning("Nickname cannot be empty.");
             return;
         }
+        PhotonNetwork.NickName = _nickname.text;
         PhotonNetwork.JoinRandomRoom();
         Enable(false);
     }
