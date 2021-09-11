@@ -14,7 +14,6 @@ public struct DamageArgs
 
 struct PlayerData
 {
-    public int ID;
     public uint Health;
     public float PositionX;
     public float PositionZ;
@@ -24,7 +23,6 @@ struct PlayerData
     {
         return new PlayerData
         {
-            ID = player.ID,
             Health = player.Health,
             PositionX = player.transform.position.x,
             PositionZ = player.transform.position.z,
@@ -35,7 +33,6 @@ struct PlayerData
     {
         PlayerData playerData = (PlayerData)data;
         List<byte> array = new List<byte>();
-        array.AddRange(BitConverter.GetBytes(playerData.ID));
         array.AddRange(BitConverter.GetBytes(playerData.Health));
         array.AddRange(BitConverter.GetBytes(playerData.PositionX));
         array.AddRange(BitConverter.GetBytes(playerData.PositionZ));
@@ -46,11 +43,44 @@ struct PlayerData
     {
         return new PlayerData
         {
-            ID = BitConverter.ToInt32(data, 0),
-            Health = BitConverter.ToUInt32(data, 4),
-            PositionX = BitConverter.ToSingle(data, 8),
-            PositionZ = BitConverter.ToSingle(data, 12),
-            RotationY = BitConverter.ToSingle(data, 16),
+            Health = BitConverter.ToUInt32(data, 0),
+            PositionX = BitConverter.ToSingle(data, 4),
+            PositionZ = BitConverter.ToSingle(data, 8),
+            RotationY = BitConverter.ToSingle(data, 12),
+        };
+    }
+} 
+
+struct ProjectileData
+{
+    public float PositionX;
+    public float PositionZ;
+    public float RotationY;
+    public static ProjectileData Parse(ProjectileScript projectile)
+    {
+        return new ProjectileData
+        {
+            PositionX = projectile.transform.position.x,
+            PositionZ = projectile.transform.position.z,
+            RotationY = projectile.transform.eulerAngles.y
+        };
+    }
+    public static byte[] Serialize(object data)
+    {
+        ProjectileData projectileData = (ProjectileData)data;
+        List<byte> array = new List<byte>();
+        array.AddRange(BitConverter.GetBytes(projectileData.PositionX));
+        array.AddRange(BitConverter.GetBytes(projectileData.PositionZ));
+        array.AddRange(BitConverter.GetBytes(projectileData.RotationY));
+        return array.ToArray();
+    }
+    public static object Deserialize(byte[] data)
+    {
+        return new ProjectileData
+        {
+            PositionX = BitConverter.ToSingle(data, 0),
+            PositionZ = BitConverter.ToSingle(data, 4),
+            RotationY = BitConverter.ToSingle(data, 8),
         };
     }
 }

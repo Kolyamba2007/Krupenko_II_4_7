@@ -5,14 +5,15 @@ using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(PhotonView))]
-public class PlayerScript : MonoBehaviour, IEquatable<PlayerScript>, IPunObservable
+public class PlayerScript : MonoBehaviour, IEquatable<PlayerScript>, IComparable<PlayerScript>, IPunObservable
 {
     private PlayerControls _playerControls;
     private PhotonView _photonView;
 
     private PlayerData _playerData;
-    public int ID { private set => _playerData.ID = value; get => _playerData.ID; }
+    public int ID => _photonView.Owner.ActorNumber;
     public uint Health { private set => _playerData.Health = value; get => _playerData.Health; }
+    public string Nickname => _photonView.Owner.NickName;
 
     [SerializeField, Min(0)]
     private float _movementSpeed;
@@ -21,37 +22,48 @@ public class PlayerScript : MonoBehaviour, IEquatable<PlayerScript>, IPunObserva
     private bool CanAttack { set; get; } = true;
 
     public event Action<PlayerScript> Died;
-    public event Action<Vector3> Fire;
+    public event Action Fire;
 
     private void Awake()
     {
         _photonView = GetComponent<PhotonView>();
-        if (!_photonView.IsMine) return;
-        _playerControls = new PlayerControls();
+        if (_photonView.IsMine)
+        {
+            _playerControls = new PlayerControls();
+        }
+        GameManager.RegisterPlayer(this);
     }
     private void Update()
     {
         if (!_photonView.IsMine) return;
 
+        #region Movement
         Vector2 movement = _playerControls.Player.Movement.ReadValue<Vector2>();
         if (movement.x != 0 || movement.y != 0)
         {
             transform.position += new Vector3(movement.x, 0, movement.y) * _movementSpeed * Time.deltaTime;
         }
+        #endregion
 
+        #region Rotation
         Vector2 mousePosition = _playerControls.Player.Pointer.ReadValue<Vector2>();
         var ray = Camera.main.ScreenPointToRay(mousePosition);
         if (Physics.Raycast(ray, out var hit, 500f))
         {
-            transform.LookAt(new Vector3(hit.point.x, transform.position.y, hit.point.z), Vector3.up);
+            Vector3 targetPoint = new Vector3(hit.point.x, transform.position.y, hit.point.z);
+            Quaternion targetRotation = Quaternion.LookRotation(targetPoint - transform.position);
+            transform.rotation = targetRotation;
         }
+        #endregion
 
+        #region Fire
         var fire = _playerControls.Player.Fire.IsPressed();
         if (fire && CanAttack)
         {
-            Fire?.Invoke(transform.forward);
+            Fire?.Invoke();
             StartCoroutine(AttackCooldown());
         }
+        #endregion
     }
     private IEnumerator AttackCooldown()
     {
@@ -106,4 +118,9 @@ public class PlayerScript : MonoBehaviour, IEquatable<PlayerScript>, IPunObserva
     }
 
     public bool Equals(PlayerScript other) => ID == other.ID;
+    public int CompareTo(PlayerScript other)
+    {
+        if (ID <= other.ID) return -1;
+        else return 1;
+    }
 }

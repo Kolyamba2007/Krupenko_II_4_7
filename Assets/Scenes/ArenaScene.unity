@@ -539,6 +539,7 @@ MonoBehaviour:
   _projectilePrefab: {fileID: 4206035014160954653, guid: 19e6a18683f6d26498191f3ca8f6f442,
     type: 3}
   _unitsRoot: {fileID: 1636609284}
+  _cameraController: {fileID: 2016921416}
 --- !u!1 &1381536446
 GameObject:
   m_ObjectHideFlags: 0
@@ -998,7 +999,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2016921412}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8631dc5514638564f807ba0253830a8e, type: 3}
+  m_Script: {fileID: 11500000, guid: 513fcaf0694002e429db8b42cb2e9ac7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera: {fileID: 0}
+  _offset: {x: 0, y: -5}
