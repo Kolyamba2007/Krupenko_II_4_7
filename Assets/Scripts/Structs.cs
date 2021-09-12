@@ -14,7 +14,7 @@ public struct DamageArgs
 
 struct PlayerData
 {
-    public uint Health;
+    public int Health;
     public float PositionX;
     public float PositionZ;
     public float RotationY;
@@ -43,7 +43,7 @@ struct PlayerData
     {
         return new PlayerData
         {
-            Health = BitConverter.ToUInt32(data, 0),
+            Health = BitConverter.ToInt32(data, 0),
             PositionX = BitConverter.ToSingle(data, 4),
             PositionZ = BitConverter.ToSingle(data, 8),
             RotationY = BitConverter.ToSingle(data, 12),

@@ -58,7 +58,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
     private ProjectileScript InstantiateProjectile(PlayerScript player)
     {
-        Vector3 position = player.transform.position + player.transform.forward * 1.2f;
+        Vector3 position = player.transform.position + player.transform.forward * 1.5f;
         var projectile = PhotonNetwork.Instantiate($"Prefabs/{_projectilePrefab.name}", position, player.transform.rotation);
         return projectile.GetComponent<ProjectileScript>();
     }

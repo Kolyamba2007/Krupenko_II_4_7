@@ -29,7 +29,6 @@ public class ProjectileScript : MonoBehaviour, IPunObservable
     public void Blast(PlayerScript owner)
     {
         _owner = owner;
-        //transform.LookAt(transform.forward + direction, Vector3.up);
     }
 
     private void OnCollisionEnter(Collision collision)
