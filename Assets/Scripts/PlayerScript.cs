@@ -29,8 +29,6 @@ public class PlayerScript : MonoBehaviour, IEquatable<PlayerScript>, IComparable
     public event Action<int?> Died;
     public event Action Fire;
 
-    private Vector3 currentPos;
-
     private void Awake()
     {
         _photonView = GetComponent<PhotonView>();
@@ -46,13 +44,11 @@ public class PlayerScript : MonoBehaviour, IEquatable<PlayerScript>, IComparable
         if (!_photonView.IsMine) return;
 
         #region Movement
-        float distance = (currentPos - transform.position).sqrMagnitude;
         Vector2 movement = _playerControls.Player.Movement.ReadValue<Vector2>();
         if (movement.x != 0 || movement.y != 0)
         {
-            currentPos += new Vector3(movement.x, 0, movement.y) * _movementSpeed * Time.deltaTime;
+            transform.position += new Vector3(movement.x, 0, movement.y) * _movementSpeed * Time.deltaTime;
         }
-        if (distance <= 4f) transform.position = Vector3.Lerp(transform.position, currentPos, Time.deltaTime * 5);
         #endregion
 
         #region Rotation
@@ -119,7 +115,7 @@ public class PlayerScript : MonoBehaviour, IEquatable<PlayerScript>, IComparable
     private void UpdateProperties(PlayerData data)
     {
         _health = data.Health;
-        currentPos = new Vector3(data.PositionX, transform.position.y, data.PositionZ);
+        transform.position = new Vector3(data.PositionX, transform.position.y, data.PositionZ);
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, data.RotationY, transform.eulerAngles.z);
     }
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

@@ -704,7 +704,7 @@ MonoBehaviour:
   _projectilePrefab: {fileID: 4206035014160954653, guid: 19e6a18683f6d26498191f3ca8f6f442,
     type: 3}
   _unitsRoot: {fileID: 1636609284}
-  UI: {fileID: 1885053077}
+  _UIManager: {fileID: 1885053077}
   _cameraController: {fileID: 2016921416}
 --- !u!1 &1381536446
 GameObject:

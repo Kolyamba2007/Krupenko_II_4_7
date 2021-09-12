@@ -3,6 +3,8 @@ using Photon.Pun;
 using System;
 using ExitGames.Client.Photon;
 using Photon.Realtime;
+using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
@@ -19,7 +21,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     private Leaderboard Leaderboard { set; get; } = new Leaderboard();
 
     [Header("Controllers"), SerializeField]
-    private UIManager UI;
+    private UIManager _UIManager;
     [Space, SerializeField]
     private CameraController _cameraController;
 
@@ -43,16 +45,24 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         if (killerID.HasValue)
         {
-            var killer = _playersTable.PlayersList[killerID.Value];
-            StartCoroutine(UI.ShowText($"Player {player.Nickname} was eliminated by {killer.Nickname}!"));
+            var killer = Leaderboard.PlayersList[killerID.Value];
+            Debug.Log($"Player {player.Nickname} was eliminated by {killer.Nickname}!");
         }
-        else StartCoroutine(UI.ShowText($"Player {player.Nickname} died!"));
+        else Debug.Log($"Player {player.Nickname} died!");
 
-        if (PhotonNetwork.LocalPlayer.ActorNumber == player.ID)
+        StartCoroutine(DiedCoroutine(player.ID));
+    }
+    private IEnumerator DiedCoroutine(int playerID)
+    {
+        Coroutine coroutine;
+        if (PhotonNetwork.LocalPlayer.ActorNumber == playerID)
         {
-            StartCoroutine(UI.ShowText($"You are dead!"));
+            coroutine = StartCoroutine(_UIManager.ShowText($"You are dead!", 3f));
         }
-        else StartCoroutine(UI.ShowText($"You won!"));
+        else coroutine = StartCoroutine(_UIManager.ShowText($"You won!", 3f));
+        yield return coroutine;
+
+        SceneManager.LoadScene(0);
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
