@@ -88,8 +88,8 @@ public class PlayerScript : MonoBehaviour, IEquatable<PlayerScript>, IComparable
     private void Enable(bool isEnabled)
     {
         CanAttack = isEnabled;
-        Rigidbody.isKinematic = isEnabled;
-        Rigidbody.detectCollisions = isEnabled;
+        Rigidbody.isKinematic = !isEnabled;
+        Rigidbody.detectCollisions = !isEnabled;
 
         if (!_photonView.IsMine) return;
         if (isEnabled) _playerControls.Enable();
