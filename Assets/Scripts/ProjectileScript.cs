@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(PhotonView))]
 public class ProjectileScript : MonoBehaviour, IPunObservable
 {
-    private PlayerScript _owner;
+    public int OwnerID { set; get; }
 
     [SerializeField, Min(0)]
     private float _movementSpeed;
@@ -28,7 +28,7 @@ public class ProjectileScript : MonoBehaviour, IPunObservable
 
     public void Blast(PlayerScript owner)
     {
-        _owner = owner;
+        OwnerID = owner.ID;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -36,9 +36,9 @@ public class ProjectileScript : MonoBehaviour, IPunObservable
         if (collision.transform.tag == "Player")
         {
             var player = collision.gameObject.GetComponent<PlayerScript>();
-            if (player != _owner)
+            if (player.ID != OwnerID)
             {
-                player.Hit(new DamageArgs(_damage, _owner));
+                player.Hit(new DamageArgs(_damage, OwnerID));
                 Destroy(gameObject);
             }
         }
@@ -49,6 +49,7 @@ public class ProjectileScript : MonoBehaviour, IPunObservable
         if (stream.IsReading)
         {
             var data = (ProjectileData)stream.ReceiveNext();
+            OwnerID = data.OwnerID;
             transform.position = new Vector3(data.PositionX, transform.position.y, data.PositionZ);
             transform.eulerAngles = new Vector3(transform.eulerAngles.x, data.RotationY, transform.eulerAngles.z);
         }

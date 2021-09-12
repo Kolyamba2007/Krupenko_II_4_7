@@ -4,11 +4,11 @@ using System.Collections.Generic;
 public struct DamageArgs
 {
     public readonly uint Value;
-    public readonly PlayerScript Source;
-    public DamageArgs(uint value, PlayerScript source)
+    public readonly int? SourceID;
+    public DamageArgs(uint value, int? sourceID)
     {
         Value = value;
-        Source = source;
+        SourceID = sourceID;
     }
 }
 
@@ -53,6 +53,7 @@ struct PlayerData
 
 struct ProjectileData
 {
+    public int OwnerID;
     public float PositionX;
     public float PositionZ;
     public float RotationY;
@@ -60,6 +61,7 @@ struct ProjectileData
     {
         return new ProjectileData
         {
+            OwnerID = projectile.OwnerID,
             PositionX = projectile.transform.position.x,
             PositionZ = projectile.transform.position.z,
             RotationY = projectile.transform.eulerAngles.y
@@ -69,6 +71,7 @@ struct ProjectileData
     {
         ProjectileData projectileData = (ProjectileData)data;
         List<byte> array = new List<byte>();
+        array.AddRange(BitConverter.GetBytes(projectileData.OwnerID));
         array.AddRange(BitConverter.GetBytes(projectileData.PositionX));
         array.AddRange(BitConverter.GetBytes(projectileData.PositionZ));
         array.AddRange(BitConverter.GetBytes(projectileData.RotationY));
@@ -78,9 +81,10 @@ struct ProjectileData
     {
         return new ProjectileData
         {
-            PositionX = BitConverter.ToSingle(data, 0),
-            PositionZ = BitConverter.ToSingle(data, 4),
-            RotationY = BitConverter.ToSingle(data, 8),
+            OwnerID = BitConverter.ToInt32(data, 0),
+            PositionX = BitConverter.ToSingle(data, 4),
+            PositionZ = BitConverter.ToSingle(data, 8),
+            RotationY = BitConverter.ToSingle(data, 12),
         };
     }
 }
