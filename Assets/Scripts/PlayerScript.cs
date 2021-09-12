@@ -4,6 +4,7 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
+[RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PhotonView))]
 public class PlayerScript : MonoBehaviour, IEquatable<PlayerScript>, IComparable<PlayerScript>, IPunObservable
 {
@@ -12,13 +13,16 @@ public class PlayerScript : MonoBehaviour, IEquatable<PlayerScript>, IComparable
 
     private PlayerData _playerData;
     public int ID => _photonView.Owner.ActorNumber;
-    public uint Health { private set => _playerData.Health = value; get => _playerData.Health; }
+    public uint Health;
     public string Nickname => _photonView.Owner.NickName;
 
     [SerializeField, Min(0)]
     private float _movementSpeed;
     [SerializeField, Min(0)]
     private float _attackCooldown = 2f;
+
+    private Rigidbody Rigidbody { set; get; }
+
     private bool CanAttack { set; get; } = true;
 
     public event Action<PlayerScript> Died;
@@ -27,6 +31,7 @@ public class PlayerScript : MonoBehaviour, IEquatable<PlayerScript>, IComparable
     private void Awake()
     {
         _photonView = GetComponent<PhotonView>();
+        Rigidbody = GetComponent<Rigidbody>();
         if (_photonView.IsMine)
         {
             _playerControls = new PlayerControls();
@@ -80,23 +85,30 @@ public class PlayerScript : MonoBehaviour, IEquatable<PlayerScript>, IComparable
     {
         Enable(false);
     }
+    private void Enable(bool isEnabled)
+    {
+        CanAttack = isEnabled;
+        Rigidbody.isKinematic = isEnabled;
+        Rigidbody.detectCollisions = isEnabled;
+
+        if (!_photonView.IsMine) return;
+        if (isEnabled) _playerControls.Enable();
+        else _playerControls.Disable();
+    }
 
     public void Hit(DamageArgs args)
     {
         if (Health - args.Value > 0) Health -= args.Value;
         else
         {
-            Health = 0;
+            Die();
             Died?.Invoke(args.Source);
         }
     }
-    public void Enable(bool isEnabled)
+    private void Die()
     {
-        CanAttack = isEnabled;
-
-        if (!_photonView.IsMine) return;
-        if (isEnabled) _playerControls.Enable();
-        else _playerControls.Disable();
+        Health = 0;
+        Enable(false);
     }
 
     private void UpdateProperties(PlayerData data)

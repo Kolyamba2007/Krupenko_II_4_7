@@ -34,10 +34,13 @@ public class ProjectileScript : MonoBehaviour, IPunObservable
 
     private void OnCollisionEnter(Collision collision)
     {
-        var player = collision.gameObject.GetComponent<PlayerScript>();
-        if (player != null && player != _owner)
+        if (collision.transform.tag == "Player")
         {
-            player.Hit(new DamageArgs(_damage, _owner));
+            var player = collision.gameObject.GetComponent<PlayerScript>();
+            if (player != _owner)
+            {
+                player.Hit(new DamageArgs(_damage, _owner));
+            }
         }
     }
 
