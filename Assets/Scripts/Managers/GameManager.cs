@@ -18,7 +18,8 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     private PlayersTable _playersTable = new PlayersTable();
 
-    [Header("Controllers")]
+    [Header("Controllers"), SerializeField]
+    private UIManager UI;
     [Space, SerializeField]
     private CameraController _cameraController;
 
@@ -43,15 +44,15 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (killerID.HasValue)
         {
             var killer = _playersTable.PlayersList[killerID.Value];
-            Debug.Log($"Player {player.Nickname} was eliminated by {killer.Nickname}!");
+            StartCoroutine(UI.ShowText($"Player {player.Nickname} was eliminated by {killer.Nickname}!"));
         }
-        else Debug.Log($"Player {player.Nickname} died!");
+        else StartCoroutine(UI.ShowText($"Player {player.Nickname} died!"));
 
         if (PhotonNetwork.LocalPlayer.ActorNumber == player.ID)
         {
-            Debug.Log($"You are dead!");
+            StartCoroutine(UI.ShowText($"You are dead!"));
         }
-        else Debug.Log($"You won!");
+        else StartCoroutine(UI.ShowText($"You won!"));
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)

@@ -7,12 +7,7 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Text endGameText;
 
-    private void Start()
-    {
-        StartCoroutine(ShowText("ABOBA"));
-    }
-
-    private IEnumerator ShowText(string text)
+    public IEnumerator ShowText(string text)
     {
 
         endGameText.text = text;
