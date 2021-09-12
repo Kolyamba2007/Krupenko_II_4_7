@@ -64,7 +64,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         yield return coroutine;
 
         PhotonNetwork.LeaveRoom();
-        SceneManager.LoadScene(0, LoadSceneMode.Single);
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
@@ -74,6 +73,10 @@ public class GameManager : MonoBehaviourPunCallbacks
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         Debug.Log($"Player {otherPlayer.NickName} left the room.");
+    }
+    public override void OnLeftRoom()
+    {
+        SceneManager.LoadScene(0, LoadSceneMode.Single);
     }
 
     private PlayerScript InstantiatePlayer(Vector3 position)
