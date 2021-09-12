@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField]
     private Transform _unitsRoot;
 
+    [Header("Controllers")]
     [Space, SerializeField]
     private CameraController _cameraController;
 
@@ -29,8 +30,13 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
     private void Start()
     {
-        var player = InstantiatePlayer(new Vector3(0, 5, 0));
+        var player = InstantiatePlayer(new Vector3(0, 2, 0));
         _cameraController.AttachTo(player);
+    }
+
+    private static void OnPlayerDied(PlayerScript player)
+    {
+        Debug.Log("YOU ARE DEAD!");
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
@@ -64,10 +70,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             var projectile = Instance.InstantiateProjectile(player);
             projectile.Blast(player);
         };
-        player.Died += (source) =>
-        {
-            player.Enable(false);
-        };
+        player.Died += OnPlayerDied;
         player.name = $"Player {player.Nickname}";
         player.transform.SetParent(Instance._unitsRoot);
     }
