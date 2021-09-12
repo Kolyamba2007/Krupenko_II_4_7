@@ -62,7 +62,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         else coroutine = StartCoroutine(_UIManager.ShowText($"You won!", 3f));
         yield return coroutine;
 
-        SceneManager.LoadScene(0);
+        PhotonNetwork.LeaveRoom();
+        SceneManager.LoadScene(0, LoadSceneMode.Single);
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)

@@ -45,9 +45,9 @@ public class MenuManager : MonoBehaviourPunCallbacks
         Debug.Log($"Player {_nickname.text} created room.");
     }
     public override void OnConnectedToMaster()
-    {
-        Enable(true);
+    {  
         Debug.Log("Connected to Master.");
+        Enable(true);
     }
     public override void OnJoinedRoom()
     {
@@ -74,9 +74,9 @@ public class MenuManager : MonoBehaviourPunCallbacks
             Debug.LogWarning("Nickname cannot be empty.");
             return;
         }
+        Enable(false);
         PhotonNetwork.NickName = _nickname.text;
         PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 2 });
-        Enable(false);
     }
     public void Connect_UnityEditor()
     {
@@ -85,8 +85,8 @@ public class MenuManager : MonoBehaviourPunCallbacks
             Debug.LogWarning("Nickname cannot be empty.");
             return;
         }
+        Enable(false);
         PhotonNetwork.NickName = _nickname.text;
         PhotonNetwork.JoinRandomRoom();
-        Enable(false);
     }
 }
