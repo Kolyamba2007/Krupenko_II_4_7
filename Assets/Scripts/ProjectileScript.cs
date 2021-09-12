@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(PhotonView))]
 public class ProjectileScript : MonoBehaviour, IPunObservable
 {
-    public int OwnerID { set; get; }
+    public int OwnerID { private set; get; }
 
     [SerializeField, Min(0)]
     private float _movementSpeed;
@@ -26,7 +26,7 @@ public class ProjectileScript : MonoBehaviour, IPunObservable
         }
     }
 
-    public void Blast(PlayerScript owner)
+    public void SetOwner(PlayerScript owner)
     {
         OwnerID = owner.ID;
     }

@@ -42,10 +42,11 @@ public class GameManager : MonoBehaviourPunCallbacks
     private void OnPlayerDied(int playerID, int? killerID)
     {
         var player = Leaderboard.PlayersList[playerID];
-
+        player.Enable(false);
         if (killerID.HasValue)
         {
             var killer = Leaderboard.PlayersList[killerID.Value];
+            killer.Enable(false);
             Debug.Log($"Player {player.Nickname} was eliminated by {killer.Nickname}!");
         }
         else Debug.Log($"Player {player.Nickname} died!");
@@ -94,7 +95,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         player.Fire += () =>
         {
             var projectile = Instance.InstantiateProjectile(player);
-            projectile.Blast(player);
+            projectile.SetOwner(player);
         };
         player.Died += (killerID) => Instance.OnPlayerDied(player.ID, killerID);
         player.name = $"Player {player.Nickname}";

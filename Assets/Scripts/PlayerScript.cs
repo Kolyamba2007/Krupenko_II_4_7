@@ -86,7 +86,7 @@ public class PlayerScript : MonoBehaviour, IEquatable<PlayerScript>, IComparable
     {
         Enable(false);
     }
-    private void Enable(bool isEnabled)
+    public void Enable(bool isEnabled)
     {
         CanAttack = isEnabled;
         Rigidbody.isKinematic = !isEnabled;
@@ -106,14 +106,9 @@ public class PlayerScript : MonoBehaviour, IEquatable<PlayerScript>, IComparable
         }
         else
         {
-            Die();
+            _health = 0;
             Died?.Invoke(args.SourceID);
         }
-    }
-    private void Die()
-    {
-        _health = 0;
-        Enable(false);
     }
 
     private void UpdateProperties(PlayerData data)
