@@ -42,6 +42,7 @@ public class ProjectileScript : MonoBehaviour, IPunObservable
                 player.Hit(new DamageArgs(_damage, _owner));
             }
         }
+        Destroy(gameObject);
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
