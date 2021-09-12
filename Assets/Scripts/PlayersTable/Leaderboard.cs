@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
-public class PlayersTable
+public class Leaderboard
 {
     private Dictionary<int, PlayerScript> _playersList { set; get; } = new Dictionary<int, PlayerScript>();
     public IReadOnlyDictionary<int, PlayerScript> PlayersList => _playersList;

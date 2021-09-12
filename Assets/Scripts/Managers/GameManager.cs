@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField]
     private Transform _unitsRoot;
 
-    private PlayersTable _playersTable = new PlayersTable();
+    private Leaderboard Leaderboard { set; get; } = new Leaderboard();
 
     [Header("Controllers")]
     [Space, SerializeField]
@@ -38,11 +38,11 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     private void OnPlayerDied(int playerID, int? killerID)
     {
-        var player = _playersTable.PlayersList[playerID];
+        var player = Leaderboard.PlayersList[playerID];
 
         if (killerID.HasValue)
         {
-            var killer = _playersTable.PlayersList[killerID.Value];
+            var killer = Leaderboard.PlayersList[killerID.Value];
             Debug.Log($"Player {player.Nickname} was eliminated by {killer.Nickname}!");
         }
         else Debug.Log($"Player {player.Nickname} died!");
@@ -87,6 +87,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         player.Died += (killerID) => Instance.OnPlayerDied(player.ID, killerID);
         player.name = $"Player {player.Nickname}";
         player.transform.SetParent(Instance._unitsRoot);
-        Instance._playersTable.AddPlayer(player);
+        Instance.Leaderboard.AddPlayer(player);
     }
 }
