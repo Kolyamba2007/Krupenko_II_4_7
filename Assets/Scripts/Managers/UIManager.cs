@@ -14,7 +14,6 @@ public class UIManager : MonoBehaviour
 
     private IEnumerator ShowText(string text)
     {
-        //ActionMap.enabled = false;
 
         endGameText.text = text;
         endGameText.enabled = true;
@@ -22,7 +21,6 @@ public class UIManager : MonoBehaviour
         yield return new WaitForSeconds(3);
 
         endGameText.enabled = false;
-        //ActionMap.enabled = true;
         yield break;
     }
 }

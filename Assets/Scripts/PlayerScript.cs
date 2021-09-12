@@ -27,7 +27,7 @@ public class PlayerScript : MonoBehaviour, IEquatable<PlayerScript>, IComparable
 
     private bool CanAttack { set; get; } = true;
 
-    public event Action<PlayerScript> Died;
+    public event Action<int?> Died;
     public event Action Fire;
 
     private void Awake()
@@ -104,7 +104,7 @@ public class PlayerScript : MonoBehaviour, IEquatable<PlayerScript>, IComparable
         else
         {
             Die();
-            Died?.Invoke(args.Source);
+            Died?.Invoke(args.SourceID);
         }
     }
     private void Die()
@@ -134,7 +134,8 @@ public class PlayerScript : MonoBehaviour, IEquatable<PlayerScript>, IComparable
     public bool Equals(PlayerScript other) => ID == other.ID;
     public int CompareTo(PlayerScript other)
     {
-        if (ID <= other.ID) return -1;
+        if (ID < other.ID) return -1;
+        if (ID == other.ID) return 0;
         else return 1;
     }
 }

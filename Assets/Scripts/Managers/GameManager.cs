@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField]
     private Transform _unitsRoot;
 
+    private PlayersTable _playersTable = new PlayersTable();
+
     [Header("Controllers")]
     [Space, SerializeField]
     private CameraController _cameraController;
@@ -34,9 +36,22 @@ public class GameManager : MonoBehaviourPunCallbacks
         _cameraController.AttachTo(player);
     }
 
-    private static void OnPlayerDied(PlayerScript player)
+    private void OnPlayerDied(int playerID, int? killerID)
     {
-        Debug.Log("YOU ARE DEAD!");
+        var player = _playersTable.PlayersList[playerID];
+
+        if (killerID.HasValue)
+        {
+            var killer = _playersTable.PlayersList[killerID.Value];
+            Debug.Log($"Player {player.Nickname} was eliminated by {killer.Nickname}!");
+        }
+        else Debug.Log($"Player {player.Nickname} died!");
+
+        if (PhotonNetwork.LocalPlayer.ActorNumber == player.ID)
+        {
+            Debug.Log($"You are dead!");
+        }
+        else Debug.Log($"You won!");
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
@@ -52,7 +67,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         var player = PhotonNetwork.Instantiate($"Prefabs/{_playerPrefab.name}", position, Quaternion.identity);
         var component = player.GetComponent<PlayerScript>();
-        RegisterPlayer(component);
 
         return player.GetComponent<PlayerScript>();
     }
@@ -70,8 +84,9 @@ public class GameManager : MonoBehaviourPunCallbacks
             var projectile = Instance.InstantiateProjectile(player);
             projectile.Blast(player);
         };
-        player.Died += OnPlayerDied;
+        player.Died += (killerID) => Instance.OnPlayerDied(player.ID, killerID);
         player.name = $"Player {player.Nickname}";
         player.transform.SetParent(Instance._unitsRoot);
+        Instance._playersTable.AddPlayer(player);
     }
 }
