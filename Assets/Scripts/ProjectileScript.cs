@@ -40,9 +40,9 @@ public class ProjectileScript : MonoBehaviour, IPunObservable
             if (player != _owner)
             {
                 player.Hit(new DamageArgs(_damage, _owner));
+                Destroy(gameObject);
             }
         }
-        Destroy(gameObject);
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
