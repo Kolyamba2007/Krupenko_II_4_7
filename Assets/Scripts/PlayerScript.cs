@@ -13,9 +13,11 @@ public class PlayerScript : MonoBehaviour, IEquatable<PlayerScript>, IComparable
 
     private PlayerData _playerData;
     public int ID => _photonView.Owner.ActorNumber;
-    public uint Health;
+    public int Health => _health;
     public string Nickname => _photonView.Owner.NickName;
 
+    [SerializeField, Min(0)]
+    private int _health;
     [SerializeField, Min(0)]
     private float _movementSpeed;
     [SerializeField, Min(0)]
@@ -98,7 +100,7 @@ public class PlayerScript : MonoBehaviour, IEquatable<PlayerScript>, IComparable
 
     public void Hit(DamageArgs args)
     {
-        if (Health - args.Value > 0) Health -= args.Value;
+        if (Health - args.Value > 0) _health -= (int)args.Value;
         else
         {
             Die();
@@ -107,13 +109,13 @@ public class PlayerScript : MonoBehaviour, IEquatable<PlayerScript>, IComparable
     }
     private void Die()
     {
-        Health = 0;
+        _health = 0;
         Enable(false);
     }
 
     private void UpdateProperties(PlayerData data)
     {
-        Health = data.Health;
+        _health = data.Health;
         transform.position = new Vector3(data.PositionX, transform.position.y, data.PositionZ);
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, data.RotationY, transform.eulerAngles.z);
     }

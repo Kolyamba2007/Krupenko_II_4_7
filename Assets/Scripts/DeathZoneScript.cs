@@ -7,7 +7,7 @@ public class DeathZoneScript : MonoBehaviour
         if (collider.transform.tag == "Player")
         {
             var player = collider.gameObject.GetComponent<PlayerScript>();
-            player.Hit(new DamageArgs(player.Health, null));
+            player.Hit(new DamageArgs((uint)player.Health, null));
         }
     }
 }
