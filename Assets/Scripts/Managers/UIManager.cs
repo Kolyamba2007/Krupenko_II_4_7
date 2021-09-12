@@ -7,13 +7,13 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Text endGameText;
 
-    public IEnumerator ShowText(string text)
+    public IEnumerator ShowText(string text, float time)
     {
 
         endGameText.text = text;
         endGameText.enabled = true;
 
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(time);
 
         endGameText.enabled = false;
         yield break;
