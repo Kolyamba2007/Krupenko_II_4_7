@@ -99,7 +99,11 @@ public class PlayerScript : MonoBehaviour, IEquatable<PlayerScript>, IComparable
 
     public void Hit(DamageArgs args)
     {
-        if (Health - args.Value > 0) _health -= (int)args.Value;
+        if (Health - args.Value > 0)
+        {
+            _health -= (int)args.Value;
+            Debug.Log($"Player {Nickname} recieved {args.Value} damage. Health: {_health}.");
+        }
         else
         {
             Die();
